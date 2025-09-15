@@ -47,3 +47,7 @@ def home():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    # Add this new route to serve the upload page
+@app.route('/upload')
+def upload_page():
+    return send_from_directory('.', 'upload.html')
