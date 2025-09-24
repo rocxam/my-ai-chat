@@ -1,35 +1,207 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Upload File to AI</title>
+  <meta charset="utf-8" />
+  <title>My AI Chat</title>
+  <style>
+    /* ------ PAGE BACKGROUND & RIPPLE EFFECT ------ */
+    body {
+      min-height: 100vh;
+      display: flex; /* Allows centering the chat box */
+      align-items: center; /* Vertical center */
+      justify-content: center; /* Horizontal center */
+      background: radial-gradient(circle at 50% 50%, #202020 0%, #000 100%);
+      overflow: hidden;
+      perspective: 1200px; /* 3D perspective for children */
+      animation: ripple-bg 6s infinite linear; /* Animate the background for ripple effect */
+    }
+    /* Keyframes for ripple/wavy animation of the background */
+    @keyframes ripple-bg {
+      0% { background-position: 50% 50%; }
+      20% { background-position: 53% 47%; }
+      40% { background-position: 47% 53%; }
+      60% { background-position: 51% 49%; }
+      80% { background-position: 49% 51%; }
+      100% { background-position: 50% 50%; }
+    }
+
+    /* ------ CHAT BOX (CENTERED, 3D, SHAKY) ------ */
+    .center-box {
+      padding: 40px 32px;
+      border-radius: 18px;
+      border: 1px solid transparent; /* Frame is almost invisible */
+      background: linear-gradient(135deg, #070707 85%, #111 100%);
+      box-shadow: 0 16px 40px 0 rgba(0,0,0,0.42), 0 1px 8px rgba(0,0,0,0.18); /* Soft shadow for depth */
+      transform: scale(0.97) rotateX(12deg) rotateY(-7deg); /* 3D effect */
+      filter: drop-shadow(0 0 50px #2b2b2b); /* Soft glow */
+      text-align: center;
+      color: #fafafa;
+      position: relative;
+      animation: shaky 1.8s infinite cubic-bezier(.36,.07,.19,.97); /* Shaky/ripple box effect */
+      transition: transform 0.2s, box-shadow 0.2s;
+      backdrop-filter: blur(2px); /* Slight blur for glassy look */
+    }
+    /* Keyframes for shaky/ripple chat box animation */
+    @keyframes shaky {
+      0%,100% { transform: scale(0.97) rotateX(12deg) rotateY(-7deg); }
+      5% { transform: scale(0.98) rotateX(13deg) rotateY(-9deg); }
+      10% { transform: scale(1.01) rotateX(11deg) rotateY(-6deg); }
+      15% { transform: scale(0.96) rotateX(14deg) rotateY(-8deg);}
+      20% { transform: scale(1.02) rotateX(10deg) rotateY(-6deg);}
+      25% { transform: scale(0.98) rotateX(13deg) rotateY(-7deg);}
+      30% { transform: scale(1.01) rotateX(12deg) rotateY(-10deg);}
+      35% { transform: scale(0.99) rotateX(11deg) rotateY(-7deg);}
+      40% { transform: scale(1.00) rotateX(12deg) rotateY(-8deg);}
+      45% { transform: scale(0.97) rotateX(13deg) rotateY(-7deg);}
+      50% { transform: scale(0.99) rotateX(12deg) rotateY(-7deg);}
+      60% { transform: scale(1.01) rotateX(12deg) rotateY(-7deg);}
+      70% { transform: scale(1.00) rotateX(14deg) rotateY(-6deg);}
+      80% { transform: scale(0.98) rotateX(11deg) rotateY(-8deg);}
+      90% { transform: scale(0.99) rotateX(12deg) rotateY(-9deg);}
+    }
+    /* Box pops out and animation stops on hover */
+    .center-box:hover {
+      transform: scale(1.03) rotateX(8deg) rotateY(-2deg);
+      box-shadow: 0 36px 120px 0 rgba(0,0,0,0.8), 0 4px 18px rgba(0,0,0,0.7);
+      animation: none;
+    }
+
+    /* ------ CHAT HEADER ------ */
+    h2 {
+      margin-bottom: 18px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: #fff;
+      text-shadow: 0 1px 8px #000;
+      opacity: 0.96;
+    }
+
+    /* ------ INPUT FIELD ------ */
+    input[type="text"] {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: #222;
+      color: #fafafa;
+      font-size: 1rem;
+      margin-bottom: 10px;
+      width: 72%;
+      box-shadow: 0 1px 6px #111;
+      outline: none;
+      transition: border 0.2s;
+    }
+    /* Input field focus effect */
+    input:focus {
+      border: 1.5px solid #4f8cff;
+      background: #181818;
+    }
+
+    /* ------ SEND BUTTON ------ */
+    button {
+      padding: 11px 32px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #4f8cff 30%, #2323ff 100%);
+      color: #fff;
+      border: none;
+      font-size: 1rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      cursor: pointer;
+      margin-left: 6px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 8px #222;
+      transition: background 0.2s, transform 0.2s;
+    }
+    /* Button hover effect */
+    button:hover {
+      background: linear-gradient(90deg, #2323ff 30%, #7fc1ff 100%);
+      transform: scale(1.07);
+    }
+
+    /* ------ RESPONSE TEXT ------ */
+    #response {
+      margin-top: 14px;
+      font-size: 1.14rem;
+      color: #4f8cff;
+      min-height: 36px;
+      transition: color 0.2s;
+      word-break: break-word;
+      text-shadow: 0 1px 4px #000;
+    }
+  </style>
 </head>
 <body>
-    <h2>Upload a File</h2>
-    <input type="file" id="fileInput" />
-    <button onclick="uploadFile()">Upload to Cloudinary</button>
+  <!-- 
+    CHAT BOX CONTAINER
+    All UI elements for the chat are inside this box.
+    Change box styles in the .center-box CSS section.
+  -->
+  <div class="center-box">
+    <!-- 
+      CHAT HEADING
+      Change title text here.
+    -->
+    <h2>Talk to AI</h2>
+    <!-- 
+      INPUT FIELD
+      Change input styles in input[type="text"] CSS section.
+      The 'id' is used in JavaScript to get the user message.
+    -->
+    <input id="userInput" type="text" placeholder="Type hi..." autocomplete="off" />
+    <!-- 
+      SEND BUTTON
+      Click to send message.
+      Button styles in the 'button' CSS section.
+    -->
+    <button id="sendBtn">Send</button>
+    <!-- 
+      RESPONSE AREA
+      AI's reply appears here.
+      Change styles in #response CSS section.
+    -->
     <p id="response"></p>
+  </div>
+  <script>
+    // --- JS HANDLES CHAT LOGIC AND INTERACTION ---
 
-    <script>
-        async function uploadFile() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                alert("Please select a file first.");
-                return;
-            }
+    // SEND BUTTON CLICK EVENT
+    // When you click 'Send', sendMessage() runs.
+    document.getElementById("sendBtn").addEventListener("click", sendMessage);
 
-            const formData = new FormData();
-            formData.append('file', file);
+    // ALLOW ENTER KEY TO SEND
+    // When you type in the input field and hit ENTER, sendMessage() runs.
+    document.getElementById("userInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
+    });
 
-            const res = await fetch('/chat', {
-                method: 'POST',
-                body: formData
-            });
-            
-            const data = await res.json();
-            document.getElementById("response").innerText = "AI: " + data.reply;
-        }
-    </script>
+    // MAIN FUNCTION TO SEND MESSAGE TO BACKEND AND SHOW REPLY
+    async function sendMessage(){
+      // Get the user's message from input box
+      const message = document.getElementById("userInput").value;
+      // If input is empty, don't send
+      if (!message.trim()) return;
+      // Show 'Thinking...' while waiting for AI
+      document.getElementById("response").innerText = "Thinking...";
+      try {
+        // Send message to backend using fetch API
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message }) // Send as JSON
+        });
+        // Parse response from backend
+        const data = await res.json();
+        // Show AI's reply
+        document.getElementById("response").innerText = "AI: " + data.reply;
+      } catch (e) {
+        // If backend fails, show error
+        document.getElementById("response").innerText = "Error: Could not reach AI.";
+      }
+    }
+  </script>
 </body>
 </html>

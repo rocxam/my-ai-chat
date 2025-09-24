@@ -1,208 +1,116 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>My AI Chat</title>
+  <meta charset="UTF-8">
+  <title>trendUs</title>
   <style>
-    /* ------ PAGE BACKGROUND & RIPPLE EFFECT ------ */
+    /* -------------------------------
+       PAGE BACKGROUND (Black + Waves)
+    ------------------------------- */
     body {
-      min-height: 100vh;
-      display: flex; /* Allows centering the chat box */
-      align-items: center; /* Vertical center */
-      justify-content: center; /* Horizontal center */
-      background: radial-gradient(circle at 50% 50%, #202020 0%, #000 100%);
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #000; /* pure black */
       overflow: hidden;
-      perspective: 1200px; /* 3D perspective for children */
-      animation: ripple-bg 6s infinite linear; /* Animate the background for ripple effect */
+      perspective: 2000px; /* deep perspective */
+      animation: oceanWaves 8s infinite linear;
     }
-    /* Keyframes for ripple/wavy animation of the background */
-    @keyframes ripple-bg {
+
+    /* Wavy background animation */
+    @keyframes oceanWaves {
       0% { background-position: 50% 50%; }
-      20% { background-position: 53% 47%; }
-      40% { background-position: 47% 53%; }
-      60% { background-position: 51% 49%; }
-      80% { background-position: 49% 51%; }
+      25% { background-position: 55% 45%; }
+      50% { background-position: 45% 55%; }
+      75% { background-position: 52% 48%; }
       100% { background-position: 50% 50%; }
     }
 
-    /* ------ CHAT BOX (CENTERED, 3D, SHAKY) ------ */
-    .center-box /* ------ CHAT BOX (CENTERED, 3D, SHAKY) ------ */
-.center-box {
-  /* your updated CSS here! */
-  padding: 40px 32px;
-  border-radius: 18px;
-  border: 1px solid transparent; /* almost invisible */
-  background: linear-gradient(135deg, #2b2b2b 85%, #111 100%);
-  box-shadow: 0 16px 40px 0 rgba(0,0,0,0.42), 0 1px 8px rgba(0,0,0,0.18);
-  transform: scale(0.97) rotateX(12deg) rotateY(-7deg);
-  filter: drop-shadow(0 0 50px #2b2b2b);
-  text-align: center;
-  color: #fafafa;
-  position: relative;
-  animation: shaky 1.8s infinite cubic-bezier(.36,.07,.19,.97);
-  transition: transform 0.2s, box-shadow 0.2s;
-  backdrop-filter: blur(2px);
-}
-    /* Keyframes for shaky/ripple chat box animation */
+    /* -------------------------------
+       CHAT BOX (Tiny, Shaky, Deep)
+    ------------------------------- */
+    .chat-box {
+      width: 260px;
+      padding: 14px;
+      border-radius: 10px;
+      background: rgba(20, 20, 20, 0.85);
+      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9),
+                  0 6px 20px rgba(255, 255, 255, 0.05);
+      text-align: center;
+      color: #f5f5f5;
+      font-family: Arial, sans-serif;
+      transform: scale(0.9) rotateX(18deg) rotateY(-14deg);
+      animation: shaky 4s infinite ease-in-out;
+    }
+
     @keyframes shaky {
-      0%,100% { transform: scale(0.97) rotateX(12deg) rotateY(-7deg); }
-      5% { transform: scale(0.98) rotateX(13deg) rotateY(-9deg); }
-      10% { transform: scale(1.01) rotateX(11deg) rotateY(-6deg); }
-      15% { transform: scale(0.96) rotateX(14deg) rotateY(-8deg);}
-      20% { transform: scale(1.02) rotateX(10deg) rotateY(-6deg);}
-      25% { transform: scale(0.98) rotateX(13deg) rotateY(-7deg);}
-      30% { transform: scale(1.01) rotateX(12deg) rotateY(-10deg);}
-      35% { transform: scale(0.99) rotateX(11deg) rotateY(-7deg);}
-      40% { transform: scale(1.00) rotateX(12deg) rotateY(-8deg);}
-      45% { transform: scale(0.97) rotateX(13deg) rotateY(-7deg);}
-      50% { transform: scale(0.99) rotateX(12deg) rotateY(-7deg);}
-      60% { transform: scale(1.01) rotateX(12deg) rotateY(-7deg);}
-      70% { transform: scale(1.00) rotateX(14deg) rotateY(-6deg);}
-      80% { transform: scale(0.98) rotateX(11deg) rotateY(-8deg);}
-      90% { transform: scale(0.99) rotateX(12deg) rotateY(-9deg);}
-    }
-    /* Box pops out and animation stops on hover */
-    .center-box:hover {
-      transform: scale(1.03) rotateX(8deg) rotateY(-2deg);
-      box-shadow: 0 36px 120px 0 rgba(0,0,0,0.8), 0 4px 18px rgba(0,0,0,0.7);
-      animation: none;
+      0%,100% { transform: scale(0.9) rotateX(18deg) rotateY(-14deg); }
+      25% { transform: scale(0.92) rotateX(20deg) rotateY(-16deg); }
+      50% { transform: scale(0.88) rotateX(16deg) rotateY(-12deg); }
+      75% { transform: scale(0.91) rotateX(19deg) rotateY(-15deg); }
     }
 
-    /* ------ CHAT HEADER ------ */
     h2 {
-      margin-bottom: 18px;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      font-size: 2rem;
-      font-weight: 600;
-      letter-spacing: 2px;
-      color: #fff;
-      text-shadow: 0 1px 8px #000;
-      opacity: 0.96;
-    }
-
-    /* ------ INPUT FIELD ------ */
-    input[type="text"] {
-      padding: 10px 16px;
-      border-radius: 8px;
-      border: 1px solid #333;
-      background: #222;
-      color: #fafafa;
-      font-size: 1rem;
-      margin-bottom: 10px;
-      width: 72%;
-      box-shadow: 0 1px 6px #111;
-      outline: none;
-      transition: border 0.2s;
-    }
-    /* Input field focus effect */
-    input:focus {
-      border: 1.5px solid #8B4513;
-      background: #181818;
-    }
-
-    /* ------ SEND BUTTON ------ */
-    button {
-      padding: 11px 32px;
-      border-radius: 8px;
-      background: linear-gradient(90deg, #101113 30%, #0f0f15 100%);
-      color: #fff;
-      border: none;
-      font-size: 1rem;
-      font-weight: bold;
+      margin-bottom: 12px;
+      font-size: 1.4rem;
       letter-spacing: 1px;
-      cursor: pointer;
-      margin-left: 6px;
-      margin-bottom: 16px;
-      box-shadow: 0 1px 8px #222;
-      transition: background 0.2s, transform 0.2s;
-    }
-    /* Button hover effect */
-    button:hover {
-      background: linear-gradient(90deg, #2323ff 30%, #7fc1ff 100%);
-      transform: scale(1.07);
+      color: #fff;
     }
 
-    /* ------ RESPONSE TEXT ------ */
-    #response {
-      margin-top: 14px;
-      font-size: 1.14rem;
-      color: #8B4513;
-      min-height: 36px;
-      transition: color 0.2s;
-      word-break: break-word;
-      text-shadow: 0 1px 4px #000;
+    input[type="text"] {
+      width: 70%;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      background: #111;
+      color: #fff;
+      outline: none;
+    }
+
+    button {
+      padding: 8px 16px;
+      margin-left: 4px;
+      border: none;
+      border-radius: 6px;
+      background: linear-gradient(90deg, #333, #555);
+      color: #fff;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #666, #999);
+      transform: scale(1.05);
+    }
+
+    #chatReply {
+      margin-top: 12px;
+      font-size: 1rem;
+      color: #ccc;
+      min-height: 20px;
     }
   </style>
 </head>
 <body>
-  <!-- 
-    CHAT BOX CONTAINER
-    All UI elements for the chat are inside this box.
-    Change box styles in the .center-box CSS section.
-  -->
-  <div class="center-box">
-    <!-- 
-      CHAT HEADING
-      Change title text here.
-    -->
+  <div class="chat-box">
     <h2>trendUs</h2>
-    <!-- 
-      INPUT FIELD
-      Change input styles in input[type="text"] CSS section.
-      The 'id' is used in JavaScript to get the user message.
-    -->
-    <input id="userInput" type="text" placeholder="wagwan..." autocomplete="off" />
-    <!-- 
-      SEND BUTTON
-      Click to send message.
-      Button styles in the 'button' CSS section.
-    -->
-    <button id="sendBtn">Send</button>
-    <!-- 
-      RESPONSE AREA
-      AI's reply appears here.
-      Change styles in #response CSS section.
-    -->
-    <p id="response"></p>
+    <input type="text" id="chatInput" placeholder="Type a message...">
+    <button onclick="sendMessage()">Send</button>
+    <p id="chatReply">AI: ...</p>
   </div>
+
   <script>
-    // --- JS HANDLES CHAT LOGIC AND INTERACTION ---
-
-    // SEND BUTTON CLICK EVENT
-    // When you click 'Send', sendMessage() runs.
-    document.getElementById("sendBtn").addEventListener("click", sendMessage);
-
-    // ALLOW ENTER KEY TO SEND
-    // When you type in the input field and hit ENTER, sendMessage() runs.
-    document.getElementById("userInput").addEventListener("keydown", function(event) {
-      if (event.key === "Enter") {
-        sendMessage();
-      }
-    });
-
-    // MAIN FUNCTION TO SEND MESSAGE TO BACKEND AND SHOW REPLY
-    async function sendMessage(){
-      // Get the user's message from input box
-      const message = document.getElementById("userInput").value;
-      // If input is empty, don't send
-      if (!message.trim()) return;
-      // Show 'Thinking...' while waiting for AI
-      document.getElementById("response").innerText = "Thinking...";
-      try {
-        // Send message to backend using fetch API
-        const res = await fetch("/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message }) // Send as JSON
-        });
-        // Parse response from backend
-        const data = await res.json();
-        // Show AI's reply
-        document.getElementById("response").innerText = "AI: " + data.reply;
-      } catch (e) {
-        // If backend fails, show error
-        document.getElementById("response").innerText = "Error: Could not reach AI.";
-      }
+    async function sendMessage() {
+      const input = document.getElementById('chatInput').value;
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: input })
+      });
+      const data = await res.json();
+      document.getElementById('chatReply').innerText = "AI: " + data.reply;
     }
   </script>
 </body>
