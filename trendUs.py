@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import  Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import cloudinary
 import cloudinary.uploader
@@ -20,11 +20,67 @@ CORS(app)
 # -----------------------------
 # Simple AI Function
 # -----------------------------
+import random
+import difflib
+
 def chat_ai(user_input):
-    if user_input.lower() == "hi":
-        return "hello"
-    else:
-        return "I only reply to 'hi' 🙂"
+    # 1️⃣ Clean the user input
+    text = user_input.strip().lower()
+
+    # 2️⃣ Define common greeting patterns
+    greetings = [
+        "hi", "hello", "hey", "hiya", "yo", "howdy",
+        "good morning", "good afternoon", "good evening",
+        "what's up", "sup", "greetings"
+    ]
+
+    # 3️⃣ Define possible replies
+    replies = ["wagwan 😊"
+        "sup 😊",
+        "Hey How’s your day going?",
+        "Hi Nice to see you.",
+        "Good to have you here",
+        "Greetings 👋",
+        "Hey hey What’s up?",
+        "Hope you’re set today"
+    ]
+
+    # 4️⃣ Use fuzzy matching to find close matches
+    match = difflib.get_close_matches(text, greetings, n=1, cutoff=0.5)
+
+    # 5️⃣ Add keyword detection for flexible understanding
+    if any(word in text for word in ["morning", "afternoon", "evening", "night"]):
+        if "morning" in text:
+            return random.choice([
+                " morning 🌅",
+                "Morning Hope yo night was tight ",
+                "A fresh morning to ya"
+            ])
+        elif "afternoon" in text:
+            return random.choice([
+                "Good afternoon ☀️",
+                "Hope your afternoon’s going well",
+                "Lovely afternoon, isn’t it?"
+            ])
+        elif "evening" in text or "night" in text:
+            return random.choice([
+                "Good evening 🌙",
+                "Evening vibes Hope you’re relaxing.",
+                "Good night Rest well when you do"
+            ])
+
+    # 6️⃣ If a fuzzy match found → reply with a random greeting
+    if match:
+        return random.choice(replies)
+
+    # 7️⃣ If no match but user said *something*, still greet kindly
+    return random.choice([
+        "wagwan 😊",
+        "ki-naye",
+        "yo set?",
+        "Hey What’s up?",
+        "kinaye-bloodii 👋"
+    ])
 
 # -----------------------------
 # Routes

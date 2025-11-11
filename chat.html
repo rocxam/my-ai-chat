@@ -103,7 +103,9 @@
 
   <script>
     async function sendMessage() {
-      const input = document.getElementById('chatInput').value;
+      const inputEl = document.getElementById('chatInput');
+      const input = inputEl.value.trim();
+      if (!input) return; // Prevent sending empty messages
       const res = await fetch('/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -111,7 +113,15 @@
       });
       const data = await res.json();
       document.getElementById('chatReply').innerText = "AI: " + data.reply;
+      inputEl.value = ""; // clear after sending
     }
+
+    // ✅ Allow pressing ENTER to send message
+    document.getElementById('chatInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
   </script>
 </body>
 </html>
