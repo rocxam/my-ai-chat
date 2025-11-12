@@ -19,7 +19,6 @@
       animation: oceanWaves 8s infinite linear;
     }
 
-    /* Wavy background animation */
     @keyframes oceanWaves {
       0% { background-position: 50% 50%; }
       25% { background-position: 55% 45%; }
@@ -32,8 +31,8 @@
        CHAT BOX (Tiny, Shaky, Deep)
     ------------------------------- */
     .chat-box {
-      width: 260px;
-      padding: 14px;
+      width: 280px;
+      padding: 16px;
       border-radius: 10px;
       background: rgba(20, 20, 20, 0.85);
       box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9),
@@ -85,11 +84,42 @@
       transform: scale(1.05);
     }
 
-    #chatReply {
+    #chatHistory {
       margin-top: 12px;
-      font-size: 1rem;
-      color: #ccc;
-      min-height: 20px;
+      text-align: left;
+      max-height: 200px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #444 #111;
+    }
+
+    .msg {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 6px 8px;
+      border-radius: 6px;
+      margin: 6px 0;
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    .user {
+      color: #00d4ff;
+    }
+
+    .ai {
+      color: #aaa;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #typingIndicator {
+      font-style: italic;
+      font-size: 0.9rem;
+      color: #888;
+      margin-top: 5px;
+      display: none;
     }
   </style>
 </head>
@@ -98,29 +128,61 @@
     <h2>trendUs</h2>
     <input type="text" id="chatInput" placeholder="Type a message...">
     <button onclick="sendMessage()">Send</button>
-    <p id="chatReply">AI: ...</p>
+    <button class="service-btn" onclick="window.location.href='/campus'">Campus Manager</button>
+
+
+    <!-- Chat history -->
+    <div id="chatHistory"></div>
+
+    <!-- Typing indicator -->
+    <div id="typingIndicator">AI is typing...</div>
   </div>
 
   <script>
-    async function sendMessage() {
-      const inputEl = document.getElementById('chatInput');
-      const input = inputEl.value.trim();
-      if (!input) return; // Prevent sending empty messages
-      const res = await fetch('/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input })
-      });
-      const data = await res.json();
-      document.getElementById('chatReply').innerText = "AI: " + data.reply;
-      inputEl.value = ""; // clear after sending
+    const chatInput = document.getElementById('chatInput');
+    const chatHistory = document.getElementById('chatHistory');
+    const typingIndicator = document.getElementById('typingIndicator');
+
+    // Helper: add a message to chat history
+    function addMessage(sender, text) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `msg ${sender}`;
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      msgDiv.innerHTML = `<b>${sender === 'user' ? 'You' : 'AI'}</b> [${time}]: ${text}`;
+      chatHistory.appendChild(msgDiv);
+      chatHistory.scrollTop = chatHistory.scrollHeight;
     }
 
-    // ✅ Allow pressing ENTER to send message
-    document.getElementById('chatInput').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        sendMessage();
+    // Typing animation (fake delay for realism)
+    function showTyping(show) {
+      typingIndicator.style.display = show ? 'block' : 'none';
+    }
+
+    async function sendMessage() {
+      const input = chatInput.value.trim();
+      if (!input) return;
+      addMessage('user', input);
+      chatInput.value = '';
+      showTyping(true);
+
+      try {
+        const res = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: input })
+        });
+        const data = await res.json();
+        showTyping(false);
+        addMessage('ai', data.reply);
+      } catch (err) {
+        showTyping(false);
+        addMessage('ai', "⚠️ Connection error.");
       }
+    }
+
+    // ENTER key support
+    chatInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') sendMessage();
     });
   </script>
 </body>
