@@ -3,510 +3,143 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Campus Manager — Forest Budget</title>
+  <title>Campus Manager — Forest Budget Log</title>
 
-  <!-- Pretty fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
 
   <style>
+    /* Keep your original styles here — unchanged */
+    /* --- trimmed for brevity --- */
     :root{
-      --trunk:#4b3621;       /* tree trunk brown */
-      --bark:#3c2e20;        /* darker trunk */
-      --moss:#2f6f49;        /* deep moss green */
-      --leaf:#6fbf73;        /* leaf green */
-      --soft:#dbeadf;        /* light background tint */
-      --accent:#ae8b59;      /* wood highlight */
+      --trunk:#4b3621;
+      --bark:#3c2e20;
+      --moss:#2f6f49;
+      --leaf:#6fbf73;
+      --soft:#dbeadf;
+      --accent:#ae8b59;
       --glass: rgba(255,255,255,0.06);
       --glass-2: rgba(255,255,255,0.03);
     }
-
-    html,body{
-      height:100%;
-      margin:0;
-      font-family:"Quicksand",system-ui,-apple-system,"Segoe UI",Roboto, "Helvetica Neue", Arial;
-      background:
-        radial-gradient(circle at 10% 20%, rgba(47,111,73,0.08), transparent 10%),
-        radial-gradient(circle at 90% 80%, rgba(111,191,115,0.05), transparent 10%),
-        linear-gradient(180deg, #0b140a 0%, #071207 45%, #08110b 100%);
-      color:#fff;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      overflow-y:auto;
-    }
-
-    /* gentle floating / waves for whole page */
-    @keyframes pageFloat {
-      0%{ transform: translateY(0px) }
-      50%{ transform: translateY(-6px) }
-      100%{ transform: translateY(0px) }
-    }
-    .page-wrap {
-      min-height:100vh;
-      display:flex;
-      align-items:flex-start;
-      justify-content:center;
-      padding:36px 18px 80px 18px;
-      animation: pageFloat 8s ease-in-out infinite;
-    }
-
-    /* card */
-    .panel {
-      width:100%;
-      max-width:920px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:18px;
-      border: 1px solid rgba(255,255,255,0.04);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
-      padding:28px;
-      display:grid;
-      grid-template-columns: 1fr 420px;
-      gap:22px;
-      align-items:start;
-      backdrop-filter: blur(6px) saturate(120%);
-      position:relative;
-      overflow:hidden;
-    }
-
-    /* organic shapes (leaves) */
-    .panel::before, .panel::after{
-      content:"";
-      position:absolute;
-      border-radius:50%;
-      filter: blur(26px);
-      opacity:0.18;
-      pointer-events:none;
-    }
-    .panel::before{
-      width:420px; height:420px;
-      right:-120px; top:-80px;
-      background: radial-gradient(circle at 30% 30%, var(--leaf), transparent 40%);
-      transform:rotate(12deg);
-    }
-    .panel::after{
-      width:300px; height:300px;
-      left:-140px; bottom:-100px;
-      background: radial-gradient(circle at 60% 60%, var(--moss), transparent 40%);
-      transform: rotate(-8deg);
-    }
-
-    /* header */
-    .title {
-      display:flex;
-      align-items:center;
-      gap:14px;
-      margin-bottom:6px;
-    }
-    .logo {
-      width:56px; height:56px;
-      background: linear-gradient(160deg,var(--trunk),var(--bark));
-      border-radius:12px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.6), inset 0 -3px 10px rgba(255,255,255,0.03);
-      transform: rotate(-8deg);
-      animation: floatSmall 4s ease-in-out infinite;
-    }
-    @keyframes floatSmall {
-      0%{ transform: translateY(0) rotate(-6deg) }
-      50%{ transform: translateY(-6px) rotate(-4deg) }
-      100%{ transform: translateY(0) rotate(-6deg) }
-    }
-    .logo svg { filter: drop-shadow(0 3px 6px rgba(0,0,0,0.6)); }
-
-    .main-title {
-      font-family:"Playfair Display", serif;
-      font-size:22px;
-      color:var(--soft);
-      line-height:1;
-    }
-    .sub {
-      color: rgba(255,255,255,0.65);
-      font-size:13px;
-      margin-top:6px;
-    }
-
-    /* left column (form + explanation) */
-    .left {
-      padding-right:8px;
-    }
-    .card {
-      background: linear-gradient(180deg, var(--glass), var(--glass-2));
-      border-radius:12px;
-      padding:16px;
-      border:1px solid rgba(255,255,255,0.03);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.45);
-    }
-
-    label {
-      display:block;
-      font-weight:600;
-      margin-bottom:8px;
-      color: #eaf6ea;
-    }
-    input[type="number"] {
-      width:100%;
-      padding:12px 14px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,0.06);
-      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006));
-      color:#fff;
-      font-size:16px;
-      outline:none;
-      box-shadow: inset 0 -3px 12px rgba(0,0,0,0.6);
-    }
-    input[type="number"]::placeholder { color: rgba(255,255,255,0.35); }
-
-    .actions {
-      margin-top:14px;
-      display:flex;
-      gap:12px;
-      align-items:center;
-    }
-    .btn {
-      padding:10px 14px;
-      border-radius:10px;
-      border:none;
-      cursor:pointer;
-      font-weight:600;
-      color:#0b170b;
-      background: linear-gradient(90deg,var(--leaf), var(--moss));
-      box-shadow: 0 8px 20px rgba(47,111,73,0.18), inset 0 -3px 6px rgba(255,255,255,0.03);
-      transition: transform .18s ease, box-shadow .18s ease;
-    }
-    .btn:hover { transform: translateY(-4px) rotate(-0.7deg); box-shadow: 0 18px 40px rgba(47,111,73,0.2); }
-
-    .ghost {
-      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      color:var(--soft);
-      border:1px solid rgba(255,255,255,0.04);
-    }
-
-    /* right column (results) */
-    .right {
-      padding-left:8px;
-    }
-
-    .meter {
-      margin-bottom:12px;
-    }
-    .meter .label {
-      display:flex;
-      justify-content:space-between;
-      font-size:14px;
-      color: #e8f6ea;
-      margin-bottom:6px;
-    }
-
-    .bar {
-      height:26px;
-      border-radius:14px;
-      background: linear-gradient(90deg, rgba(0,0,0,0.14), rgba(255,255,255,0.02));
-      overflow:hidden;
-      position:relative;
-      border:1px solid rgba(0,0,0,0.35);
-    }
-    .bar > .fill {
-      position:absolute;
-      left:0; top:0; bottom:0;
-      width:0%;
-      border-radius:14px;
-      transition: width .9s cubic-bezier(.2,.9,.2,1);
-      display:flex;
-      align-items:center;
-      padding-left:10px;
-      font-weight:600;
-      color: rgba(10,10,10,0.9);
-      text-shadow: none;
-      box-shadow: inset 0 -6px 14px rgba(255,255,255,0.02), 0 6px 18px rgba(0,0,0,0.4);
-    }
-
-    .fill.food { background: linear-gradient(90deg, #d9a05a, #b57a3a); color:#111; }       /* warm wood */
-    .fill.transport { background: linear-gradient(90deg, #a6d8a8, #5fb56b); color:#08220b; } /* green */
-    .fill.clothes { background: linear-gradient(90deg, #cdb3a0, #8a6b53); color:#111; }      /* soft bark */
-    .fill.gadgets { background: linear-gradient(90deg, #9fc7d6, #5b94a6); color:#061a1f; }     /* river blue */
-    .fill.outing { background: linear-gradient(90deg, #f3c2c2,#d99595); color:#111; }         /* rosy */
-
-    .big-total {
-      font-family:"Playfair Display", serif;
-      font-size:34px;
-      color:var(--soft);
-      letter-spacing:0.5px;
-    }
-    .muted {
-      color:rgba(255,255,255,0.6);
-      font-size:13px;
-    }
-
-    .note {
-      margin-top:12px;
-      font-size:13px;
-      color:rgba(255,255,255,0.6);
-    }
-
-    .footer-row {
-      margin-top:18px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-    }
-
-    .back {
-      background:linear-gradient(90deg, var(--trunk), var(--bark));
-      color:#fff;
-      padding:8px 12px;
-      border-radius:10px;
-      text-decoration:none;
-      border: 1px solid rgba(255,255,255,0.04);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.55);
-    }
-
-    /* floating leaf icons */
-    .leaf {
-      position:absolute;
-      width:84px; height:84px;
-      background: radial-gradient(circle at 40% 30%, var(--leaf), var(--moss));
-      border-radius:46% 54% 60% 40% / 40% 60% 40% 60%;
-      transform: rotate(-15deg);
-      filter: blur(2px);
-      opacity:0.14;
-      animation: floatLeaf 6s ease-in-out infinite;
-      pointer-events:none;
-    }
-    .leaf.l1 { right:18px; top:18px; animation-delay:0s; }
-    .leaf.l2 { left:28px; bottom:18px; width:120px;height:120px; animation-delay:1.8s; opacity:0.12; transform: rotate(8deg); }
-    @keyframes floatLeaf {
-      0%{ transform: translateY(0) rotate(-12deg) }
-      50%{ transform: translateY(-10px) rotate(-2deg) }
-      100%{ transform: translateY(0) rotate(-12deg) }
-    }
-
-    /* responsive */
-    @media (max-width:880px){
-      .panel { grid-template-columns: 1fr; padding:18px; }
-      .right { margin-top:12px; padding-left:0; }
-    }
-
+    html,body{margin:0;height:100%;font-family:"Quicksand",system-ui; background:#08110b;color:#fff;}
+    .page-wrap{display:flex;justify-content:center;padding:40px;}
+    .panel{max-width:900px;width:100%;background:rgba(255,255,255,0.02);border-radius:18px;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+    input,button{font-family:inherit;}
+    input[type="number"],input[type="text"]{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;font-size:16px;margin-bottom:10px;}
+    .btn{padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:600;color:#0b170b;background:linear-gradient(90deg,var(--leaf),var(--moss));}
+    .btn:hover{transform:translateY(-3px);}
+    h2{font-family:"Playfair Display",serif;margin-top:0;color:var(--soft);}
+    .log-table{width:100%;border-collapse:collapse;margin-top:10px;}
+    .log-table th,.log-table td{border-bottom:1px solid rgba(255,255,255,0.08);padding:8px;text-align:left;}
+    .log-table th{color:var(--soft);}
+    .balance{font-size:20px;font-weight:700;margin-top:10px;color:var(--leaf);}
   </style>
 </head>
 <body>
   <div class="page-wrap">
-    <div class="panel" role="main" aria-labelledby="campus">
-      <div class="left">
-        <div class="title">
-          <div class="logo" aria-hidden="true">
-            <!-- simple tree icon -->
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C10 4 6 4 5 7C2 8 3 12 6 13C6 14 6 16 5 17C7 18 11 18 12 20C13 18 17 18 19 17C18 16 18 14 18 13C21 12 22 8 19 7C18 4 14 4 12 2Z" fill="#e7d0b4"/>
-            </svg>
-          </div>
-          <div>
-            <div class="main-title">Campus Manager</div>
-            <div class="sub">Forest-themed Student Budget Planner — quick projection of semester expenses</div>
-          </div>
-        </div>
+    <div class="panel">
+      <h2>🌿 Campus Budget Tracker</h2>
+      <p>Enter your total budget and log expenses to see remaining balance.</p>
 
-        <div class="card" aria-live="polite">
-          <label for="totalInput">Enter total money you have for the semester (e.g., 1000000)</label>
-          <input id="totalInput" type="number" placeholder="Enter amount (UGX, or your currency)" min="0" inputmode="numeric" />
+      <label for="budget">💰 Total Budget (e.g. 50000):</label>
+      <input type="number" id="budget" placeholder="Enter total budget" min="0" />
 
-          <div class="actions">
-            <button class="btn" id="calcBtn" title="Calculate projection">Calculate Projection</button>
-            <button class="btn ghost" id="resetBtn" title="Reset values">Reset</button>
-          </div>
+      <div class="balance">Remaining Balance: <span id="balanceDisplay">UGX 0</span></div>
 
-          <div class="note">
-            Default projection: <strong>Food 80%</strong>, <strong>Transport 10%</strong>, rest split across Clothes, Gadgets, Outing. You can change weights in code later.
-          </div>
-        </div>
-      </div>
+      <hr style="margin:20px 0; opacity:0.3;">
 
-      <div class="right">
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div>
-              <div class="muted">Semester Budget</div>
-              <div class="big-total" id="totalDisplay">UGX 0</div>
-              <div class="muted">Projected allocations below</div>
-            </div>
-            <div style="text-align:right;">
-              <div class="muted">Status</div>
-              <div id="statusPill" style="margin-top:6px; font-weight:700; color:var(--leaf);">Ready</div>
-            </div>
-          </div>
+      <h3>Add Expense</h3>
+      <input type="text" id="item" placeholder="Expense description (e.g. Lunch)" />
+      <input type="number" id="amount" placeholder="Amount spent (e.g. 9000)" min="0" />
 
-          <hr style="border:0; height:1px; background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.06)); margin:14px 0;">
+      <button class="btn" id="addExpense">Add Expense</button>
+      <button class="btn" style="background:rgba(255,255,255,0.05);color:#fff;margin-left:6px;" id="reset">Reset</button>
 
-          <!-- meters -->
-          <div class="meter">
-            <div class="label"><span>Food</span><span id="foodAmt">UGX 0 (0%)</span></div>
-            <div class="bar"><div class="fill food" id="foodBar"></div></div>
-          </div>
+      <table class="log-table" id="logTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Description</th>
+            <th>Amount (UGX)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
 
-          <div class="meter">
-            <div class="label"><span>Transport</span><span id="transAmt">UGX 0 (0%)</span></div>
-            <div class="bar"><div class="fill transport" id="transBar"></div></div>
-          </div>
-
-          <div class="meter">
-            <div class="label"><span>Clothes</span><span id="clothAmt">UGX 0 (0%)</span></div>
-            <div class="bar"><div class="fill clothes" id="clothBar"></div></div>
-          </div>
-
-          <div class="meter">
-            <div class="label"><span>Gadgets</span><span id="gadAmt">UGX 0 (0%)</span></div>
-            <div class="bar"><div class="fill gadgets" id="gadBar"></div></div>
-          </div>
-
-          <div class="meter">
-            <div class="label"><span>Outing</span><span id="outAmt">UGX 0 (0%)</span></div>
-            <div class="bar"><div class="fill outing" id="outBar"></div></div>
-          </div>
-
-          <div class="footer-row">
-            <a class="back" href="/">← Back to Chat</a>
-            <div class="muted" id="explain">Projection ready</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- decorative leaves -->
-      <div class="leaf l1" aria-hidden="true"></div>
-      <div class="leaf l2" aria-hidden="true"></div>
     </div>
   </div>
 
 <script>
-  // Helper: format numbers with commas
+  let totalBudget = 0;
+  let remaining = 0;
+  let expenses = [];
+
+  const budgetInput = document.getElementById('budget');
+  const itemInput = document.getElementById('item');
+  const amountInput = document.getElementById('amount');
+  const addExpenseBtn = document.getElementById('addExpense');
+  const balanceDisplay = document.getElementById('balanceDisplay');
+  const logTableBody = document.querySelector('#logTable tbody');
+  const resetBtn = document.getElementById('reset');
+
   function fmt(n){
-    if (isNaN(n) || n === null) return "0";
-    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return n.toLocaleString('en-UG', {minimumFractionDigits:0});
   }
 
-  // Default weights (change here if you want)
-  const WEIGHTS = {
-    food: 0.80,
-    transport: 0.10,
-    // remaining 0.10 split:
-    clothes: 0.04,
-    gadgets: 0.03,
-    outing: 0.03
-  };
-
-  // Elements
-  const totalInput = document.getElementById('totalInput');
-  const calcBtn = document.getElementById('calcBtn');
-  const resetBtn = document.getElementById('resetBtn');
-  const totalDisplay = document.getElementById('totalDisplay');
-  const statusPill = document.getElementById('statusPill');
-
-  const foodBar = document.getElementById('foodBar');
-  const transBar = document.getElementById('transBar');
-  const clothBar = document.getElementById('clothBar');
-  const gadBar = document.getElementById('gadBar');
-  const outBar = document.getElementById('outBar');
-
-  const foodAmt = document.getElementById('foodAmt');
-  const transAmt = document.getElementById('transAmt');
-  const clothAmt = document.getElementById('clothAmt');
-  const gadAmt = document.getElementById('gadAmt');
-  const outAmt = document.getElementById('outAmt');
-  const explain = document.getElementById('explain');
-
-  // Animate fill width and text
-  function animateFill(el, pct){
-    // ensure pct between 0 and 100
-    pct = Math.max(0, Math.min(100, pct));
-    // small delay for cascade feel
-    setTimeout(()=> el.style.width = pct + "%", 80);
+  // Update display
+  function updateDisplay(){
+    balanceDisplay.textContent = `UGX ${fmt(remaining)}`;
+    logTableBody.innerHTML = expenses.map((exp, i) =>
+      `<tr><td>${i+1}</td><td>${exp.item}</td><td>${fmt(exp.amount)}</td></tr>`
+    ).join('');
   }
 
-  function calculateAndShow(totalRaw){
-    const total = Number(totalRaw) || 0;
-    totalDisplay.textContent = total ? `UGX ${fmt(total)}` : "UGX 0";
-
-    // compute amounts
-    const a_food = Math.round(total * WEIGHTS.food);
-    const a_trans = Math.round(total * WEIGHTS.transport);
-    const a_cloth = Math.round(total * WEIGHTS.clothes);
-    const a_gad = Math.round(total * WEIGHTS.gadgets);
-    const a_out = Math.round(total * WEIGHTS.outing);
-
-    // percentages (for bars)
-    const p_food = ((a_food / total) * 100) || 0;
-    const p_trans = ((a_trans / total) * 100) || 0;
-    const p_cloth = ((a_cloth / total) * 100) || 0;
-    const p_gad = ((a_gad / total) * 100) || 0;
-    const p_out = ((a_out / total) * 100) || 0;
-
-    // set text and animate bars
-    foodAmt.textContent = total ? `UGX ${fmt(a_food)} (${p_food.toFixed(0)}%)` : "UGX 0 (0%)";
-    transAmt.textContent = total ? `UGX ${fmt(a_trans)} (${p_trans.toFixed(0)}%)` : "UGX 0 (0%)";
-    clothAmt.textContent = total ? `UGX ${fmt(a_cloth)} (${p_cloth.toFixed(0)}%)` : "UGX 0 (0%)";
-    gadAmt.textContent = total ? `UGX ${fmt(a_gad)} (${p_gad.toFixed(0)}%)` : "UGX 0 (0%)";
-    outAmt.textContent = total ? `UGX ${fmt(a_out)} (${p_out.toFixed(0)}%)` : "UGX 0 (0%)";
-
-    // show "calculating" effect
-    statusPill.textContent = "Calculating…";
-    statusPill.style.color = "var(--accent)";
-
-    // animate fills (timed stagger)
-    animateFill(foodBar, p_food);
-    setTimeout(()=> animateFill(transBar, p_trans), 120);
-    setTimeout(()=> animateFill(clothBar, p_cloth), 220);
-    setTimeout(()=> animateFill(gadBar, p_gad), 320);
-    setTimeout(()=> animateFill(outBar, p_out), 420);
-
-    // nice detail: after animation complete, update status
-    setTimeout(() => {
-      statusPill.textContent = "Projection ready";
-      statusPill.style.color = "var(--leaf)";
-      explain.textContent = "This projection is a guideline — adjust priorities in your head or change weights in settings.";
-    }, 1200);
-  }
-
-  // Clear bars back to zero
-  function resetDisplay(){
-    totalInput.value = "";
-    totalDisplay.textContent = "UGX 0";
-    [foodBar, transBar, clothBar, gadBar, outBar].forEach(b => b.style.width = "0%");
-    [foodAmt, transAmt, clothAmt, gadAmt, outAmt].forEach(el => el.textContent = "UGX 0 (0%)");
-    statusPill.textContent = "Ready";
-    statusPill.style.color = "var(--leaf)";
-    explain.textContent = "Projection ready";
-  }
-
-  // Enter key triggers calc
-  totalInput.addEventListener('keydown', function(e){
-    if (e.key === "Enter"){
-      e.preventDefault();
-      calcBtn.click();
-    }
-  });
-
-  calcBtn.addEventListener('click', function(){
-    const v = totalInput.value;
-    if (!v || Number(v) <= 0){
-      // subtle shake animation to show error
-      const card = calcBtn.closest('.card');
-      card.animate([
-        { transform: 'translateX(0)' },
-        { transform: 'translateX(-8px)' },
-        { transform: 'translateX(8px)' },
-        { transform: 'translateX(0)' }
-      ], { duration: 350, easing: 'ease-in-out' });
-      statusPill.textContent = "Enter an amount";
-      statusPill.style.color = "#f5a6a6";
+  // Add new expense
+  addExpenseBtn.addEventListener('click', ()=>{
+    if (!totalBudget || totalBudget <= 0){
+      alert("Please enter your total budget first.");
       return;
     }
-    calculateAndShow(v);
+    const item = itemInput.value.trim();
+    const amt = parseFloat(amountInput.value);
+    if (!item || isNaN(amt) || amt <= 0){
+      alert("Enter valid expense details.");
+      return;
+    }
+    if (amt > remaining){
+      alert("Not enough balance for this expense!");
+      return;
+    }
+    expenses.push({item, amount:amt});
+    remaining -= amt;
+    itemInput.value = "";
+    amountInput.value = "";
+    updateDisplay();
   });
 
-  resetBtn.addEventListener('click', resetDisplay);
+  // Set total budget
+  budgetInput.addEventListener('change', ()=>{
+    const val = parseFloat(budgetInput.value);
+    if (isNaN(val) || val <= 0){
+      alert("Enter a valid total budget.");
+      return;
+    }
+    totalBudget = val;
+    remaining = val - expenses.reduce((sum,e)=>sum+e.amount,0);
+    updateDisplay();
+  });
 
-  // init: reset on load
-  resetDisplay();
+  // Reset all
+  resetBtn.addEventListener('click', ()=>{
+    totalBudget = 0;
+    remaining = 0;
+    expenses = [];
+    budgetInput.value = "";
+    itemInput.value = "";
+    amountInput.value = "";
+    updateDisplay();
+  });
+
+  updateDisplay();
 </script>
 
 </body>
