@@ -2,3 +2,6 @@ flask
 gunicorn
 flask_cors
 cloudinary
+supabase
+google-generativeai
+python-dotenv
