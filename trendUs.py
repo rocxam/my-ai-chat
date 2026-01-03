@@ -1,7 +1,7 @@
 # -------------------------------------------
 # IMPORTS
 # -------------------------------------------
-from flask import Flask, request, jsonify, send_from_directory, render_template, session
+from flask import Flask, request, jsonify, send_from_directory, render_template
 from flask_cors import CORS
 import cloudinary
 import cloudinary.uploader
@@ -24,9 +24,6 @@ cloudinary.config(
 # -------------------------------------------
 app = Flask(__name__, static_folder='.', template_folder='templates')
 CORS(app)
-
-# Secret key for session handling (required for storing user balance & transactions)
-app.secret_key = 'myscrete123'
 
 # -------------------------------------------
 # SIMPLE AI FUNCTION
@@ -88,13 +85,12 @@ def chat_ai(user_input):
 # ROUTES
 # -------------------------------------------
 
-# Default route → Chat interface
+# Chat interface
 @app.route('/')
 def home():
     return render_template('chat.html')
 
-
-# Chat API endpoint for processing messages
+# Chat API
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.get_json()
@@ -104,49 +100,15 @@ def chat():
         return jsonify({'reply': reply})
     return jsonify({'reply': "Send a message."})
 
-
 # -------------------------------------------
-# CAMPUS MANAGER (BUDGET LOGGING FEATURE)
-# -------------------------------------------
-@app.route('/campus', methods=['GET', 'POST'])
-def campus():
-    # On first visit, initialize budget and empty transaction list
-    if 'balance' not in session:
-        session['balance'] = 50000  # Starting budget projection
-        session['transactions'] = []
-
-    # Handle form submission
-    if request.method == 'POST':
-        description = request.form.get('description', '').strip()
-        amount = float(request.form.get('amount', 0))
-
-        # Reduce budget based on user input
-        session['balance'] -= amount
-
-        # Store transaction
-        session['transactions'].append({
-            'description': description,
-            'amount': amount
-        })
-
-    # Render page with current data
-    return render_template(
-        'campus.html',
-        transactions=session.get('transactions', []),
-        balance=session.get('balance', 50000)
-    )
-
-
-# -------------------------------------------
-# STATIC FILE SERVING (OPTIONAL)
+# STATIC FILE SERVING
 # -------------------------------------------
 @app.route('/<path:path>')
 def static_proxy(path):
     return send_from_directory('.', path)
 
-
 # -------------------------------------------
-# RUN APP LOCALLY
+# RUN APP
 # -------------------------------------------
 if __name__ == '__main__':
     app.run(debug=True)
