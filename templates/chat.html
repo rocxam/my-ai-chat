@@ -2,188 +2,169 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>trendUs</title>
+  <title>trendUs Portal</title>
   <style>
-    /* -------------------------------
-       PAGE BACKGROUND (Black + Waves)
-    ------------------------------- */
+    /* I kept your pure black background and oceanWaves animation */
     body {
       margin: 0;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column; /* Stack chat and table vertically */
+      justify-content: flex-start; 
       align-items: center;
-      background: #000; /* pure black */
-      overflow: hidden;
-      perspective: 2000px; /* deep perspective */
+      background: #000;
+      overflow-y: auto; /* Enable scrolling so we can see the table */
+      perspective: 2000px;
       animation: oceanWaves 8s infinite linear;
+      padding: 40px 0;
     }
 
     @keyframes oceanWaves {
       0% { background-position: 50% 50%; }
-      25% { background-position: 55% 45%; }
       50% { background-position: 45% 55%; }
-      75% { background-position: 52% 48%; }
       100% { background-position: 50% 50%; }
     }
 
-    /* -------------------------------
-       CHAT BOX (Tiny, Shaky, Deep)
-    ------------------------------- */
+    /* CHAT BOX (Kept your Deep/Shaky style) */
     .chat-box {
-      width: 280px;
-      padding: 16px;
+      width: 350px; /* Slightly wider for buttons */
+      padding: 20px;
       border-radius: 10px;
       background: rgba(20, 20, 20, 0.85);
-      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9),
-                  0 6px 20px rgba(255, 255, 255, 0.05);
+      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9);
       text-align: center;
       color: #f5f5f5;
       font-family: Arial, sans-serif;
       transform: scale(0.9) rotateX(18deg) rotateY(-14deg);
       animation: shaky 4s infinite ease-in-out;
+      margin-bottom: 50px;
     }
 
     @keyframes shaky {
       0%,100% { transform: scale(0.9) rotateX(18deg) rotateY(-14deg); }
-      25% { transform: scale(0.92) rotateX(20deg) rotateY(-16deg); }
-      50% { transform: scale(0.88) rotateX(16deg) rotateY(-12deg); }
-      75% { transform: scale(0.91) rotateX(19deg) rotateY(-15deg); }
+      50% { transform: scale(0.92) rotateX(20deg) rotateY(-16deg); }
     }
 
-    h2 {
-      margin-bottom: 12px;
-      font-size: 1.4rem;
-      letter-spacing: 1px;
-      color: #fff;
+    /* NEW: PORTAL TABLE CONTAINER */
+    .portal-container {
+      width: 90%;
+      max-width: 800px;
+      background: rgba(15, 15, 15, 0.9);
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 20px;
+      color: white;
+      font-family: Arial, sans-serif;
     }
 
-    input[type="text"] {
-      width: 70%;
-      padding: 8px;
-      border: none;
-      border-radius: 6px;
-      background: #111;
-      color: #fff;
-      outline: none;
-    }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th { text-align: left; color: #00d4ff; border-bottom: 1px solid #333; padding: 10px; }
+    td { padding: 10px; border-bottom: 1px solid #111; font-size: 0.9rem; }
 
+    /* INPUTS & BUTTONS */
+    input[type="text"], input[type="file"] {
+      width: 80%; padding: 8px; border-radius: 6px; background: #111; color: #fff; border: none; margin-bottom: 10px;
+    }
     button {
-      padding: 8px 16px;
-      margin-left: 4px;
-      border: none;
-      border-radius: 6px;
-      background: linear-gradient(90deg, #333, #555);
-      color: #fff;
-      cursor: pointer;
-      transition: 0.2s;
+      padding: 8px 16px; border: none; border-radius: 6px; background: linear-gradient(90deg, #333, #555); color: #fff; cursor: pointer; margin: 4px;
     }
+    button:hover { background: linear-gradient(90deg, #00d4ff, #005f73); }
 
-    button:hover {
-      background: linear-gradient(90deg, #666, #999);
-      transform: scale(1.05);
-    }
-
-    #chatHistory {
-      margin-top: 12px;
-      text-align: left;
-      max-height: 200px;
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: #444 #111;
-    }
-
-    .msg {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 6px 8px;
-      border-radius: 6px;
-      margin: 6px 0;
-      animation: fadeIn 0.3s ease-in;
-    }
-
-    .user {
-      color: #00d4ff;
-    }
-
-    .ai {
-      color: #aaa;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    #typingIndicator {
-      font-style: italic;
-      font-size: 0.9rem;
-      color: #888;
-      margin-top: 5px;
-      display: none;
-    }
+    .upload-zone { border-top: 1px solid #333; margin-top: 15px; padding-top: 15px; }
+    #chatHistory { margin-top: 12px; text-align: left; max-height: 150px; overflow-y: auto; }
   </style>
 </head>
 <body>
+
   <div class="chat-box">
-    <h2>trendUs</h2>
-    <input type="text" id="chatInput" placeholder="Type a message...">
+    <h2>trendUs AI</h2>
+    
+    <input type="text" id="chatInput" placeholder="Ask about an invoice...">
     <button onclick="sendMessage()">Send</button>
-    <button class="service-btn" onclick="window.location.href='/campus'">Campus Manager</button>
 
+    <div class="upload-zone">
+      <p style="font-size: 0.8rem; color: #888;">Scan PDF to Supabase</p>
+      <input type="file" id="fileInput" accept=".pdf">
+      <button onclick="uploadInvoice()">Scan Invoice</button>
+    </div>
 
-    <!-- Chat history -->
     <div id="chatHistory"></div>
+    <div id="typingIndicator" style="display:none; font-style:italic; color:#888;">AI is scanning...</div>
+  </div>
 
-    <!-- Typing indicator -->
-    <div id="typingIndicator">AI is typing...</div>
+  <div class="portal-container">
+    <h3 style="margin:0;">Live Invoice Portal</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Company</th>
+          <th>Amount</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="invoiceTableBody">
+        </tbody>
+    </table>
   </div>
 
   <script>
-    const chatInput = document.getElementById('chatInput');
-    const chatHistory = document.getElementById('chatHistory');
-    const typingIndicator = document.getElementById('typingIndicator');
-
-    // Helper: add a message to chat history
-    function addMessage(sender, text) {
-      const msgDiv = document.createElement('div');
-      msgDiv.className = `msg ${sender}`;
-      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      msgDiv.innerHTML = `<b>${sender === 'user' ? 'You' : 'AI'}</b> [${time}]: ${text}`;
-      chatHistory.appendChild(msgDiv);
-      chatHistory.scrollTop = chatHistory.scrollHeight;
-    }
-
-    // Typing animation (fake delay for realism)
-    function showTyping(show) {
-      typingIndicator.style.display = show ? 'block' : 'none';
-    }
-
+    // --- CHAT LOGIC ---
     async function sendMessage() {
-      const input = chatInput.value.trim();
+      const input = document.getElementById('chatInput').value;
       if (!input) return;
       addMessage('user', input);
-      chatInput.value = '';
-      showTyping(true);
-
-      try {
-        const res = await fetch('/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: input })
-        });
-        const data = await res.json();
-        showTyping(false);
-        addMessage('ai', data.reply);
-      } catch (err) {
-        showTyping(false);
-        addMessage('ai', "⚠️ Connection error.");
-      }
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: input })
+      });
+      const data = await res.json();
+      addMessage('ai', data.reply);
     }
 
-    // ENTER key support
-    chatInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter') sendMessage();
-    });
+    function addMessage(sender, text) {
+      const msgDiv = document.createElement('div');
+      msgDiv.style.color = sender === 'user' ? '#00d4ff' : '#aaa';
+      msgDiv.innerHTML = `<b>${sender === 'user' ? 'You' : 'AI'}:</b> ${text}`;
+      document.getElementById('chatHistory').appendChild(msgDiv);
+    }
+
+    // --- NEW: UPLOAD LOGIC ---
+    async function uploadInvoice() {
+      const fileInput = document.getElementById('fileInput');
+      if (fileInput.files.length === 0) return alert("Select a PDF");
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      document.getElementById('typingIndicator').style.display = 'block';
+
+      const res = await fetch('/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+      
+      document.getElementById('typingIndicator').style.display = 'none';
+      alert(data.message);
+      loadInvoices(); // Refresh the table automatically
+    }
+
+    // --- NEW: TABLE REFRESH LOGIC ---
+    async function loadInvoices() {
+      const res = await fetch('/get-invoices');
+      const data = await res.json();
+      const tbody = document.getElementById('invoiceTableBody');
+      tbody.innerHTML = "";
+      data.forEach(inv => {
+        tbody.innerHTML += `<tr>
+          <td>${inv.date}</td>
+          <td>${inv['client company']}</td>
+          <td>$${inv.amount}</td>
+          <td style="color:${inv.status === 'Paid' ? '#00ff88' : '#ff4f4f'}">${inv.status}</td>
+        </tr>`;
+      });
+    }
+
+    // Load table when page opens
+    loadInvoices();
   </script>
 </body>
 </html>
