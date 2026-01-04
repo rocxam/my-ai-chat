@@ -40,7 +40,7 @@ cloudinary.config(
 
 def scan_invoice(file_path):
     """Uses Gemini Vision to extract data from the PDF with a processing wait loop."""
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('models/gemini-1.5-flash')
     
     # 1. Upload to Gemini's temp storage
     sample_file = genai.upload_file(path=file_path, display_name="Invoice")
