@@ -3,5 +3,5 @@ gunicorn
 flask_cors
 cloudinary
 supabase
-google-generativeai
+google-generativeai>=0.8.3
 python-dotenv
